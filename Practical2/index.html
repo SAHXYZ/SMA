@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin – Rocks Music</title>
+<style>
+:root{
+  --bg:#07090f;--panel:rgba(14,18,29,.88);--panel2:rgba(20,25,39,.92);
+  --border:rgba(255,255,255,.09);--text:#f3f5fa;--text-2:#aeb7c8;--text-3:#707b91;
+  --accent:#7c5cff;--accent2:#19d3ae;--danger:#ff5f6d;--ok:#2ed47a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:var(--bg)}
+body{overflow-x:hidden}
+.bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-3;opacity:.24}
+.bg-video-overlay{position:fixed;inset:0;background:linear-gradient(135deg,rgba(5,7,13,.93),rgba(7,9,15,.76));z-index:-2}
+.neon-bg{position:fixed;inset:0;z-index:-1;background:
+ radial-gradient(circle at 15% 10%,rgba(124,92,255,.17),transparent 28%),
+ radial-gradient(circle at 85% 25%,rgba(25,211,174,.10),transparent 25%),
+ radial-gradient(circle at 50% 100%,rgba(124,92,255,.08),transparent 35%)}
+.page-wrap{min-height:100vh}
+.topbar{height:68px;display:flex;align-items:center;gap:30px;padding:0 34px;border-bottom:1px solid var(--border);background:rgba(7,9,15,.82);backdrop-filter:blur(18px);position:sticky;top:0;z-index:10}
+.topbar-brand{font-weight:800;letter-spacing:.2px;white-space:nowrap}
+.topbar-nav{display:flex;gap:6px}
+.topbar-nav a,.topbar-logout{color:var(--text-2);text-decoration:none;padding:9px 13px;border-radius:9px;font-size:14px}
+.topbar-nav a:hover,.topbar-nav a.active{background:rgba(124,92,255,.15);color:#fff}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.topbar-email{font-size:13px;color:var(--text-2)}
+.topbar-logout{border:1px solid var(--border)}
+.dash-wrap{width:min(1450px,calc(100% - 42px));margin:28px auto 50px}
+.alert{padding:13px 16px;border-radius:10px;margin-bottom:20px;border:1px solid}
+.alert-ok{background:rgba(46,212,122,.09);border-color:rgba(46,212,122,.3);color:#8df0b5}
+.alert-error{background:rgba(255,95,109,.09);border-color:rgba(255,95,109,.3);color:#ff9da6}
+.admin-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px}
+.dash-card{background:linear-gradient(145deg,rgba(18,23,36,.92),rgba(11,15,25,.92));border:1px solid var(--border);border-radius:15px;box-shadow:0 14px 45px rgba(0,0,0,.18);overflow:hidden}
+.stat-card{padding:20px}
+.stat-label{display:block;color:var(--text-2);font-size:13px;margin-bottom:8px}
+.stat-num{display:block;font-size:30px;font-weight:800;line-height:1.1}
+.stat-sub{display:block;color:var(--text-3);font-size:12px;margin-top:7px}
+.card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border)}
+.card-header h3{margin:0;font-size:16px}
+.key-count{color:var(--text-3);font-size:12px}
+.admin-genform{padding:20px}
+.genrow{display:grid;grid-template-columns:1fr 1fr 1fr 1.5fr;gap:14px;margin-bottom:16px}
+label{display:flex;flex-direction:column;gap:7px;color:var(--text-2);font-size:12px;font-weight:600}
+input,select{width:100%;padding:11px 12px;border-radius:9px;border:1px solid var(--border);background:#0b0f19;color:#fff;outline:none;font:inherit}
+input:focus,select:focus{border-color:rgba(124,92,255,.7);box-shadow:0 0 0 3px rgba(124,92,255,.1)}
+.btn-primary,.btn-mini{border:0;border-radius:9px;padding:11px 16px;background:var(--accent);color:#fff;font-weight:750;cursor:pointer}
+.btn-primary:hover,.btn-mini:hover{filter:brightness(1.12)}
+.btn-mini{padding:7px 10px;font-size:12px}
+.btn-mini-danger{background:rgba(255,95,109,.13);color:#ff9da6;border:1px solid rgba(255,95,109,.25)}
+.key-display{margin:20px 20px 0;padding:14px 16px;border:1px dashed rgba(25,211,174,.4);background:rgba(25,211,174,.06);border-radius:10px;display:flex;align-items:center;gap:12px;cursor:pointer}
+.key-display code{flex:1;color:#7ff1d4;word-break:break-all}
+.copy-btn{border:0;background:transparent;color:#fff;cursor:pointer;font-size:17px}
+.all-keys-card{margin-bottom:20px}
+.admin-table-wrap{overflow-x:auto}
+.admin-table{width:100%;border-collapse:collapse;min-width:850px}
+.admin-table th,.admin-table td{padding:13px 16px;text-align:left;border-bottom:1px solid var(--border);font-size:13px;white-space:nowrap}
+.admin-table th{color:var(--text-3);font-size:11px;text-transform:uppercase;letter-spacing:.06em;background:rgba(255,255,255,.015)}
+.admin-table td{color:#dfe4ee}
+.admin-table tbody tr:hover{background:rgba(255,255,255,.025)}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px!important;color:#aebaff!important}
+.badge{display:inline-flex;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:.04em}
+.badge-paid{background:rgba(124,92,255,.16);color:#b7a8ff}
+.badge-trial{background:rgba(25,211,174,.12);color:#71ead0}
+.status-active{color:#67e7a2!important}.status-revoked{color:#ff7884!important}
+.dash-footer{text-align:center;color:var(--text-3);font-size:12px;padding:12px}
+@media(max-width:1050px){.admin-stats{grid-template-columns:repeat(3,1fr)}.genrow{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.topbar{padding:0 16px;gap:10px}.topbar-nav{display:none}.topbar-email{display:none}.dash-wrap{width:min(100% - 22px,1450px);margin-top:16px}.admin-stats{grid-template-columns:1fr 1fr}.genrow{grid-template-columns:1fr}.stat-num{font-size:25px}}
+</style>
+</head>
+<body>
+<video class="bg-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+  <source src="https://files.catbox.moe/o55ngd.mp4" type="video/mp4">
+</video>
+<div class="bg-video-overlay"></div>
+<div class="neon-bg"></div>
+
+<div class="page-wrap">
+  <div class="topbar">
+    <span class="topbar-brand">🎵 Rocks Music · Admin</span>
+    <div class="topbar-nav">
+      <a href="#" class="active">Overview</a>
+      <a href="#">User View</a>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-email">🛡 admin@rocksmusic.com</span>
+      <a href="#" class="topbar-logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="dash-wrap">
+    <div class="alert alert-ok" id="flash">Test mode — this page is running as a standalone HTML file.</div>
+
+    <div class="admin-stats">
+      <div class="dash-card stat-card"><span class="stat-label">Page Views</span><span class="stat-num">12,846</span><span class="stat-sub">482 today · 8,391 unique IPs</span></div>
+      <div class="dash-card stat-card"><span class="stat-label">Registered Users</span><span class="stat-num">1,284</span><span class="stat-sub">+17 today</span></div>
+      <div class="dash-card stat-card"><span class="stat-label">Trial Keys</span><span class="stat-num">742</span><span class="stat-sub">generated total</span></div>
+      <div class="dash-card stat-card"><span class="stat-label">Paid Keys</span><span class="stat-num">318</span><span class="stat-sub">4 payments pending</span></div>
+      <div class="dash-card stat-card"><span class="stat-label">API Requests</span><span class="stat-num">284,921</span><span class="stat-sub">songs requested, all keys</span></div>
+    </div>
+
+    <div class="dash-card" style="margin-bottom:20px;">
+      <div class="card-header"><h3>⚡ Generate API Key</h3></div>
+      <div class="key-display" id="generatedKey" style="display:none;">
+        <code id="keyText"></code><button class="copy-btn" title="Copy" onclick="copyKey(event)">📋</button>
+      </div>
+      <form class="admin-genform" id="keyForm">
+        <div class="genrow">
+          <label>Type
+            <select id="keyType"><option value="trial">Trial</option><option value="paid">Paid</option></select>
+          </label>
+          <label>Request limit
+            <input type="number" id="requestLimit" min="1" value="5000" required>
+          </label>
+          <label>Expiry (days)
+            <input type="number" id="expiryDays" min="1" value="30" required>
+          </label>
+          <label>Owner (email, or "self")
+            <input type="text" id="owner" value="self" placeholder="self or user@email.com">
+          </label>
+        </div>
+        <button type="submit" class="btn-primary">Generate Key →</button>
+      </form>
+    </div>
+
+    <div class="dash-card all-keys-card">
+      <div class="card-header"><h3>Recent Users</h3><span class="key-count">1,284 total</span></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Email</th><th>Name</th><th>Plan</th><th>Keys</th><th>Requests</th><th>Joined</th></tr></thead>
+          <tbody>
+            <tr><td>arjun@example.com</td><td>Arjun Patel</td><td>PREMIUM</td><td>3</td><td>12,842</td><td>19 Aug 2026</td></tr>
+            <tr><td>riya@example.com</td><td>Riya Shah</td><td>FREE</td><td>1</td><td>2,104</td><td>18 Aug 2026</td></tr>
+            <tr><td>admin@rocksmusic.com <span class="badge badge-paid">ADMIN</span></td><td>Admin</td><td>ADMIN</td><td>8</td><td>31,550</td><td>15 Aug 2026</td></tr>
+            <tr><td>dev@example.com</td><td>Dev Kumar</td><td>PREMIUM</td><td>2</td><td>8,917</td><td>14 Aug 2026</td></tr>
+            <tr><td>musicfan@example.com</td><td>Mohit Verma</td><td>FREE</td><td>1</td><td>640</td><td>12 Aug 2026</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card all-keys-card">
+      <div class="card-header"><h3>Recent Keys</h3><span class="key-count">1,060 total</span></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Key</th><th>Owner</th><th>Type</th><th>Requests</th><th>Limit</th><th>Status</th><th>Created</th><th>Expires</th><th></th></tr></thead>
+          <tbody>
+            <tr><td class="mono">RM-TRIAL-8F3A-21C9</td><td>riya@example.com</td><td><span class="badge badge-trial">TRIAL</span></td><td>640</td><td>5,000</td><td class="status-active">Active</td><td>18 Aug 2026</td><td>17 Sep 2026</td><td><button class="btn-mini btn-mini-danger" onclick="revoke(this)">Revoke</button></td></tr>
+            <tr><td class="mono">RM-PAID-7B22-91DE</td><td>arjun@example.com</td><td><span class="badge badge-paid">PAID</span></td><td>12,842</td><td>50,000</td><td class="status-active">Active</td><td>19 Aug 2026</td><td>18 Sep 2026</td><td><button class="btn-mini btn-mini-danger" onclick="revoke(this)">Revoke</button></td></tr>
+            <tr><td class="mono">RM-TRIAL-2D91-44AA</td><td>dev@example.com</td><td><span class="badge badge-trial">TRIAL</span></td><td>8,917</td><td>10,000</td><td class="status-active">Active</td><td>14 Aug 2026</td><td>13 Sep 2026</td><td><button class="btn-mini btn-mini-danger" onclick="revoke(this)">Revoke</button></td></tr>
+            <tr><td class="mono">RM-PAID-1C88-55BF</td><td>olduser@example.com</td><td><span class="badge badge-paid">PAID</span></td><td>50,000</td><td>50,000</td><td class="status-revoked">Revoked</td><td>01 Aug 2026</td><td>31 Aug 2026</td><td>—</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-card all-keys-card">
+      <div class="card-header"><h3>Payment Submissions</h3><span class="key-count">5 shown</span></div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Txn ID</th><th>User</th><th>Amount</th><th>Status</th><th>When</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">TXN-20260819-001</td><td>arjun@example.com</td><td>₹499</td><td>Pending</td><td>19 Aug 2026 09:45</td><td><button class="btn-mini" onclick="approve(this)">Approve</button></td></tr>
+            <tr><td class="mono">TXN-20260819-002</td><td>rahul@example.com</td><td>₹499</td><td>Pending</td><td>19 Aug 2026 09:18</td><td><button class="btn-mini" onclick="approve(this)">Approve</button></td></tr>
+            <tr><td class="mono">TXN-20260818-014</td><td>riya@example.com</td><td>₹499</td><td>Done</td><td>18 Aug 2026 18:32</td><td>—</td></tr>
+            <tr><td class="mono">TXN-20260818-011</td><td>dev@example.com</td><td>₹999</td><td>Done</td><td>18 Aug 2026 16:07</td><td>—</td></tr>
+            <tr><td class="mono">TXN-20260817-009</td><td>mohit@example.com</td><td>₹499</td><td>Pending</td><td>17 Aug 2026 21:14</td><td><button class="btn-mini" onclick="approve(this)">Approve</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="dash-footer"><span>© 2026 Rocks Music · Admin Console</span></div>
+  </div>
+</div>
+
+<script>
+function makeKey(type){
+  const chars="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let s="RM-"+type.toUpperCase()+"-";
+  for(let block=0;block<2;block++){
+    for(let i=0;i<4;i++) s+=chars[Math.floor(Math.random()*chars.length)];
+    if(block===0)s+="-";
+  }
+  return s;
+}
+document.getElementById("keyForm").addEventListener("submit",function(e){
+  e.preventDefault();
+  const type=document.getElementById("keyType").value;
+  const limit=Number(document.getElementById("requestLimit").value);
+  const days=Number(document.getElementById("expiryDays").value);
+  const owner=document.getElementById("owner").value.trim()||"self";
+  const key=makeKey(type);
+  document.getElementById("keyText").textContent=key;
+  document.getElementById("generatedKey").style.display="flex";
+  document.getElementById("flash").textContent=`Generated ${type} test key for ${owner} — ${limit.toLocaleString()} requests, expires in ${days} days.`;
+  document.getElementById("flash").className="alert alert-ok";
+});
+function copyKey(e){
+  e.stopPropagation();
+  navigator.clipboard?.writeText(document.getElementById("keyText").textContent);
+  e.currentTarget.textContent="✓";
+  setTimeout(()=>e.currentTarget.textContent="📋",1000);
+}
+function revoke(btn){
+  if(!confirm("Revoke this test key?")) return;
+  const row=btn.closest("tr");
+  const status=row.children[5];
+  status.textContent="Revoked";
+  status.className="status-revoked";
+  btn.replaceWith(document.createTextNode("—"));
+}
+function approve(btn){
+  const row=btn.closest("tr");
+  row.children[3].textContent="Done";
+  btn.replaceWith(document.createTextNode("—"));
+  document.getElementById("flash").textContent="Payment approved — test paid key issued.";
+}
+</script>
+</body>
+</html>
